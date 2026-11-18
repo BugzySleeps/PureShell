@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Hyprland
 import QtQuick.Effects
 import qs.config
 import qs.services
@@ -23,15 +24,41 @@ Scope {
                 left: true
                 right: true
             }
-            implicitHeight: 150                  // room for the island to grow; only what's drawn takes clicks
+            // room for the island to grow: tall only while the Today card's open (a tall see-through layer is a
+            // big area for Hyprland to blur behind); only what's drawn takes clicks
+            implicitHeight: island.today ? 640 : 150
             exclusiveZone: bar ? Theme.barHeight : Theme.islandHeight + Theme.gap * 2
             color: "transparent"
             WlrLayershell.layer: WlrLayer.Top
             WlrLayershell.namespace: bar ? "pure-bar" : "pure-island"
+            WlrLayershell.keyboardFocus: island.today ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+
+            // the Today card closes on Esc, or a click anywhere else
+            HyprlandFocusGrab {
+                active: island.today && grabLater.done
+                windows: [win]
+                onCleared: Ui.panel = ""
+            }
+            Timer {
+                id: grabLater
+                property bool done: false
+                running: island.today
+                interval: 250
+                onRunningChanged: if (running)
+                    done = false
+                onTriggered: done = true
+            }
+            Item {
+                focus: island.today
+                Keys.onEscapePressed: Ui.panel = ""
+            }
             mask: Region {
                 item: strip
                 Region {
                     item: island.shape
+                }
+                Region {
+                    item: island.tab
                 }
             }
 

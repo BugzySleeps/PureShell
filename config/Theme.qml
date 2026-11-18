@@ -5,26 +5,67 @@ import Quickshell
 import Quickshell.Io
 
 // PureShell's look: creamy white (#edeae4) and one warm charcoal ink, Google Sans Flex, Material Symbols, soft
-// round shapes and springy motion. The colours come from ~/.local/state/rice/palette.json (the `pure` theme),
-// with the same cream built in until it's read.
+// round shapes and springy motion; or dark mode, the same in warm charcoal with the cream for text. The colours
+// come from ~/.local/state/rice/palette.json (the `pure` or `pure-dark` theme), the cream built in until it's read.
 Singleton {
     id: root
 
-    // ── colours ──
-    readonly property color cream: pick("bg1", "#edeae4")      // the island, the bar, panels
-    readonly property color creamHi: pick("bg0", "#f5f3ef")    // cards on them, popups
-    readonly property color well: pick("bg2", "#e3dfd7")       // tracks, pressed, empty dots
-    readonly property color line: pick("bg3", "#d6d0c5")       // dividers, outlines
-    readonly property color ink: pick("fg", "#2a2520")         // text and icons
-    readonly property color inkSoft: pick("accent2", "#5c544b")
-    readonly property color muted: pick("dim", "#8d8478")      // secondary text
-    readonly property color shadow: Qt.rgba(0.16, 0.14, 0.12, 0.16)
+    // ── colours ── (named for the light theme: in dark mode "cream" is the charcoal and "ink" the cream)
+    // a new palette crossfades in, so switching to dark (or back) glides instead of jumping
+    property color cream: pick("bg1", "#edeae4")               // the island, the bar, panels
+    property color creamHi: pick("bg0", "#f5f3ef")             // cards on them, popups
+    property color well: pick("bg2", "#e3dfd7")                // tracks, pressed, empty dots
+    property color line: pick("bg3", "#d6d0c5")                // dividers, outlines
+    property color ink: pick("fg", "#2a2520")                  // text and icons
+    property color inkSoft: pick("accent2", "#5c544b")
+    property color muted: pick("dim", "#8d8478")               // secondary text
+    Behavior on cream {
+        ColorAnimation {
+            duration: 600
+        }
+    }
+    Behavior on creamHi {
+        ColorAnimation {
+            duration: 600
+        }
+    }
+    Behavior on well {
+        ColorAnimation {
+            duration: 600
+        }
+    }
+    Behavior on line {
+        ColorAnimation {
+            duration: 600
+        }
+    }
+    Behavior on ink {
+        ColorAnimation {
+            duration: 600
+        }
+    }
+    Behavior on inkSoft {
+        ColorAnimation {
+            duration: 600
+        }
+    }
+    Behavior on muted {
+        ColorAnimation {
+            duration: 600
+        }
+    }
+    readonly property color shadow: dark ? Qt.rgba(0, 0, 0, 0.4) : Qt.rgba(0.16, 0.14, 0.12, 0.16)
     // the island and the bar: the cream, a breath see-through (Hyprland frosts behind it)
     readonly property color surface: Qt.alpha(cream, 0.94)
 
-    // (only the `pure` theme's palette: run beside another rice's shell, it keeps its own cream)
-    readonly property bool ours: data.name === "pure"
+    // (only the pure themes' palettes, `pure` and `pure-dark`: run beside another rice's shell, it keeps its own)
+    readonly property bool ours: (data.name ?? "").startsWith("pure")
+    readonly property bool dark: data.name === "pure-dark"
     readonly property string wallpaper: ours && data.wallpaper ? data.wallpaper : Quickshell.env("HOME") + "/.config/rice/themes/pure/wallpaper.png"
+    // dark mode: the pure-dark theme (the whole rice: the terminal, the borders, the wallpaper too)
+    function setDark(on) {
+        Quickshell.execDetached(["sh", "-c", '~/.config/rice/rice "$1" --quiet >/dev/null 2>&1', "sh", on ? "pure-dark" : "pure"]);
+    }
 
     // ── type and icons ──
     readonly property string font: "Google Sans Flex"

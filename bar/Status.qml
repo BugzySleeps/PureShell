@@ -4,7 +4,8 @@ import qs.config
 import qs.services
 import qs.components
 
-// Wifi, volume, the battery (a laptop's), and a dot while there are notifications.
+// Wifi, volume, the battery (a laptop's), and a dot while there are notifications. A click: quick settings (the
+// dot: the notifications); scroll on the volume to change it.
 Row {
     id: root
     property int size: 17
@@ -24,7 +25,8 @@ Row {
         MouseArea {
             anchors.fill: parent
             anchors.margins: -4
-            onClicked: Audio.toggleMute()
+            cursorShape: Qt.PointingHandCursor
+            onClicked: Ui.toggle("quick")
             onWheel: e => Audio.nudge(e.angleDelta.y > 0 ? 0.05 : -0.05)
         }
     }
@@ -45,6 +47,7 @@ Row {
         Txt {
             anchors.verticalCenter: parent.verticalCenter
             text: Math.round((parent.bat?.percentage ?? 0) * 100)
+            elide: Text.ElideNone
             font.pixelSize: Theme.small
             font.weight: Font.Medium
             color: Theme.inkSoft
@@ -57,5 +60,18 @@ Row {
         height: 6
         radius: 3
         color: Theme.ink
+        MouseArea {
+            anchors.fill: parent
+            anchors.margins: -8
+            cursorShape: Qt.PointingHandCursor
+            onClicked: Ui.toggle("notifs")
+        }
+    }
+    // a click anywhere else on it: quick settings
+    TapHandler {
+        onTapped: Ui.toggle("quick")
+    }
+    HoverHandler {
+        cursorShape: Qt.PointingHandCursor
     }
 }
