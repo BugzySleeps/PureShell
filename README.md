@@ -54,7 +54,7 @@ qs -c pureshell ipc call settings barStyle bar     # the bar instead of the isla
 
 ## The logo
 
-A scallop seashell, in `assets/logo/`: the shell (`logo`), an app icon (`icon`) and the wordmark, each with a
+A spiral seashell in creamy whites (a soft peach inside its mouth), in `assets/logo/`: the shell (`logo`), an app icon (`icon`) and the wordmark, each with a
 `-dark` version. `python3 assets/logo/make.py` draws them all again (it needs `rsvg-convert`).
 
 ## Licence
